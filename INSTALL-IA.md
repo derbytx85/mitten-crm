@@ -1,4 +1,4 @@
-# INSTALL-IA.md — Instalación de Vocero CRM guiada por IA
+# INSTALL-IA.md — Instalación de Mitten CRM guiada por IA
 
 > **Para el asistente de IA** (Claude Code u otro agente con acceso a
 > herramientas): este archivo ES tu guion de instalación. Síguelo de arriba a
@@ -10,10 +10,10 @@
 > ningún otro archivo**: Coolify descarga la imagen publicada y los secretos
 > viven como variables de la plataforma.
 
-**Imagen**: `ghcr.io/kevinrivm/vocero-crm:1.5.0` (GitHub Container Registry,
+**Imagen**: `ghcr.io/kevinrivm/mitten-crm:1.5.0` (GitHub Container Registry,
 una etiqueta por versión, `linux/amd64`, escucha en el puerto `3000`).
 
-**Repositorio**: `https://github.com/kevinrivm/vocero-crm` (público, rama `main`,
+**Repositorio**: `https://github.com/kevinrivm/mitten-crm` (público, rama `main`,
 `Dockerfile` en la raíz). Hace falta para la Ruta B y para construir desde el
 código.
 
@@ -53,7 +53,7 @@ dentro: README → «Instalación» → «Otras plataformas».
 | Variable | Valor |
 |---|---|
 | `APP_BASE_URL` | `https://<dominio>` |
-| `DATABASE_URL` | `postgresql://postgres:<POSTGRES_PASSWORD>@<host-postgres>:5432/vocero` |
+| `DATABASE_URL` | `postgresql://postgres:<POSTGRES_PASSWORD>@<host-postgres>:5432/mitten` |
 | `POSTGRES_PASSWORD` | generado (es la de la base; la app no la lee, solo va dentro de `DATABASE_URL`) |
 | `BETTER_AUTH_SECRET` | generado |
 | `ENCRYPTION_KEY` | generado (base64, 44 caracteres) |
@@ -73,14 +73,14 @@ cada uno está en `.env.example`): `META_APP_SECRET`, `BOT_API_KEY` y
 ## Ruta A — Coolify (con el MCP de Coolify)
 
 1. **Base de datos**: crea un servicio PostgreSQL 16 en el proyecto
-   (`database` tipo `postgresql`), con la contraseña generada y base `vocero`.
+   (`database` tipo `postgresql`), con la contraseña generada y base `mitten`.
    Anota su host interno (algo como `<uuid>:5432`).
 2. **Aplicación**: en el mismo proyecto, crea una app de tipo **Docker Image**
-   con la imagen `ghcr.io/kevinrivm/vocero-crm`, la etiqueta `1.5.0`, puerto
+   con la imagen `ghcr.io/kevinrivm/mitten-crm`, la etiqueta `1.5.0`, puerto
    expuesto `3000` y el dominio del usuario con HTTPS (MCP: `application`
    con `action: create_dockerimage`, el `project_uuid`, el
    `server_uuid` y el `environment_name` del proyecto,
-   `docker_registry_image_name: ghcr.io/kevinrivm/vocero-crm`,
+   `docker_registry_image_name: ghcr.io/kevinrivm/mitten-crm`,
    `docker_registry_image_tag: 1.5.0`, `ports_exposes: "3000"`,
    `domains: https://<dominio>` e `instant_deploy: false`). Coolify descarga
    la imagen: no hay repositorio, GitHub App ni deploy keys que configurar, ni
@@ -88,7 +88,7 @@ cada uno está en `.env.example`): `META_APP_SECRET`, `BOT_API_KEY` y
    variables.
 3. **Almacenamiento persistente**: agrega a la app un volumen montado en
    **`/data`** (MCP: `storages` con `resource: application`, el `uuid` de la
-   app, `action: create`, `type: persistent`, `name: vocero-data`,
+   app, `action: create`, `type: persistent`, `name: mitten-data`,
    `mount_path: /data`). Ahí viven los adjuntos, el logo y el icono; la imagen
    ya trae `MEDIA_DIR=/data/media`, así que **no definas `MEDIA_DIR`**. Que
    Coolify monte el volumen como root no importa: el contenedor arranca como
@@ -111,7 +111,7 @@ cada uno está en `.env.example`): `META_APP_SECRET`, `BOT_API_KEY` y
 Para un VPS ARM (p. ej. Ampere o Graviton: la imagen es `linux/amd64` y ahí no
 corre) o para un fork con cambios propios. En el paso 2, en vez de la imagen,
 crea una app tipo **repositorio público** apuntando a
-`https://github.com/kevinrivm/vocero-crm` o al fork (rama `main`, build pack
+`https://github.com/kevinrivm/mitten-crm` o al fork (rama `main`, build pack
 `dockerfile`, puerto expuesto `3000`, el dominio del usuario con HTTPS; MCP:
 `application` con `action: create_public`) — no requiere GitHub App ni deploy
 keys. Los pasos 3 a 7 son iguales. El build corre en el VPS y tarda varios
@@ -127,7 +127,7 @@ migraciones corren solas al arrancar.
 ## Ruta B — docker compose (VPS con Docker)
 
 ```bash
-git clone https://github.com/kevinrivm/vocero-crm.git vocero && cd vocero
+git clone https://github.com/kevinrivm/mitten-crm.git mitten && cd mitten
 pnpm install && pnpm init-env --domain <dominio>   # .env con los secretos generados (Node 22 + pnpm)
 pnpm doctor                                         # cada ✗ dice cómo arreglarla; sale con 1 si algo falla
 docker compose up -d
@@ -139,21 +139,21 @@ docker compose up -d
   `docker-compose.yml`. En un VPS ARM o en un fork con cambios propios, usa
   `docker compose up -d --build`: la construye desde el código.
 - Caddy emite el certificado HTTPS automáticamente con `DOMAIN`.
-- El compose ya monta el volumen `vocero_app_data` en `/data` (adjuntos, logo
+- El compose ya monta el volumen `mitten_app_data` en `/data` (adjuntos, logo
   e icono): no hay que definir `MEDIA_DIR`.
 - Verifica: `docker compose ps` (tres servicios healthy) y
   `https://<dominio>/api/health` → `{"ok":true,"version":"1.5.0",…}` (`"mediaWritable":true` confirma el volumen).
 
 ## Cierre (obligatorio decirlo al usuario)
 
-> ✅ Vocero quedó instalado en `https://<dominio>`.
+> ✅ Mitten quedó instalado en `https://<dominio>`.
 >
 > 1. Entra y **regístrate**: el primer registro crea tu organización (después
 >    el registro público se cierra solo).
 > 2. Pulsa **"Cargar datos de demostración"** si quieres explorar con la
 >    Ferretería El Martillo.
 > 3. Para conectar tu WhatsApp entra a **Configuración → WhatsApp**: ahí está
->    el wizard; al guardar, Vocero registra el webhook en Meta por sí solo (la
+>    el wizard; al guardar, Mitten registra el webhook en Meta por sí solo (la
 >    URL exacta sigue a la vista por si tu agencia enruta desde su backend o
 >    hay que pegarla a mano). La conexión del número NO es parte de esta
 >    instalación.

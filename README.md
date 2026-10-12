@@ -1,21 +1,21 @@
-# Vocero CRM
+# Mitten CRM
 
-[![CI](https://github.com/kevinrivm/vocero-crm/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinrivm/vocero-crm/actions/workflows/ci.yml)
+[![CI](https://github.com/kevinrivm/mitten-crm/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinrivm/mitten-crm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **El CRM de WhatsApp open source con un agente de IA que se pone a prueba solo.**
 
-Vocero es un CRM self-hosted y gratuito para negocios que venden por WhatsApp:
+Mitten es un CRM self-hosted y gratuito para negocios que venden por WhatsApp:
 bandeja en tiempo real, pipeline de ventas, un agente de IA con el conocimiento
 de tu negocio y un **Laboratorio** donde clientes simulados lo evalúan antes de
 que hable con clientes reales. Una instancia = un negocio, en tu propio
 servidor, con tus datos.
 
-¿Ya tienes tu propio agente? Puedes apagar el de Vocero y conectar el tuyo por
+¿Ya tienes tu propio agente? Puedes apagar el de Mitten y conectar el tuyo por
 la [API de servicio `/api/bot/*`](#-trae-tu-propio-agente): el token de WhatsApp
 nunca sale del CRM.
 
-![Bandeja de Vocero CRM](docs/screenshots/bandeja.png)
+![Bandeja de Mitten CRM](docs/screenshots/bandeja.png)
 
 <p align="center">
   <img src="docs/screenshots/laboratorio.png" width="49%" alt="Laboratorio: reporte con score y hallazgos" />
@@ -97,7 +97,7 @@ Proveedor LLM por adaptador OpenRouter-compatible: usa el modelo que quieras.
 ### 🔌 Trae tu propio agente
 
 Si prefieres conducir la conversación con tu propio cerebro —un microservicio
-tuyo, en tu mismo servidor— apaga el agente de Vocero y habilita la API de
+tuyo, en tu mismo servidor— apaga el agente de Mitten y habilita la API de
 servicio con una `BOT_API_KEY`. Tu bot conversa a través del CRM, así que **el
 token de WhatsApp nunca sale de aquí** y todo queda en la bandeja como
 cualquier otra conversación.
@@ -126,7 +126,7 @@ inunde la API sin llave no deja a tu bot sin servicio.
 
 **Que el CRM le pase cada turno a tu bot.** Tu bot no necesita recibir el
 webhook de Meta: con `BRAIN_DISPATCH_URL` (p. ej.
-`http://nea:8000/vocero/dispatch`) y la misma `BOT_API_KEY`, el mensaje entra
+`http://nea:8000/mitten/dispatch`) y la misma `BOT_API_KEY`, el mensaje entra
 primero a la bandeja y el CRM le hace a tu bot un `POST` firmado con lo que el
 cliente escribió desde la última respuesta, junto, después de esperar a que
 termine su ráfaga. Tu bot contesta por `POST /api/bot/messages`, como siempre.
@@ -140,7 +140,7 @@ y su guion en [`tests/e2e/us-despacho.md`](tests/e2e/us-despacho.md).
 
 Si tu bot recibe los webhooks de Meta por un **override de callback de la
 WABA**, guardar la conexión en Configuración → WhatsApp (o rotar el token) lo
-respeta: Vocero ve el override en `GET /{WABA}/subscribed_apps`, no re-suscribe
+respeta: Mitten ve el override en `GET /{WABA}/subscribed_apps`, no re-suscribe
 la app —que es justo lo que lo borraría— y tampoco registra su propio webhook
 en el número, porque ese tendría prioridad y dejaría sordo a tu bot. La
 pantalla te dice a qué host se está respetando.
@@ -244,7 +244,7 @@ Meta y tu proveedor LLM opcional.
 ## Instalación (~15 minutos)
 
 Cada versión se publica como imagen de Docker:
-`ghcr.io/kevinrivm/vocero-crm:<versión>` (p. ej. `1.5.0`). Instalar desde
+`ghcr.io/kevinrivm/mitten-crm:<versión>` (p. ej. `1.5.0`). Instalar desde
 la imagen es el camino recomendado: tu servidor la descarga en vez de
 construirla. Construir desde el código sigue funcionando, y es lo que
 necesitas en un VPS ARM o si tu fork cambia el código.
@@ -266,7 +266,7 @@ variante que construye desde el repositorio.
 ### Ruta B — docker compose
 
 ```bash
-git clone https://github.com/kevinrivm/vocero-crm.git vocero && cd vocero
+git clone https://github.com/kevinrivm/mitten-crm.git mitten && cd mitten
 pnpm install && pnpm init-env --domain crm.tudominio.com   # crea .env con los secretos ya generados
 pnpm doctor                                                 # revisa el .env antes de arrancar
 docker compose up -d
@@ -319,7 +319,7 @@ webhook), el token de OpenRouter y, con dominio propio, `APP_BASE_URL`. El
 disco exige plan de pago (`starter` + `basic-256mb`; la base `free` caduca a
 los 30 días).
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kevinrivm/vocero-crm)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kevinrivm/mitten-crm)
 
 **Fly.io** — [`fly.toml`](fly.toml) declara imagen, volumen `/data`, puerto
 3000, healthcheck, tamaño de máquina y las variables no secretas; Fly no deja
@@ -338,7 +338,7 @@ el dominio y las variables se crean con la CLI, con los comandos exactos
 escritos en el propio archivo (`railway add --database postgres`,
 `railway volume add --mount-path /data`, `railway domain --port 3000`,
 `railway variable set …`, `railway up`). Para la imagen publicada sin build:
-`railway add --image ghcr.io/kevinrivm/vocero-crm:1.5.0`, y entonces el
+`railway add --image ghcr.io/kevinrivm/mitten-crm:1.5.0`, y entonces el
 healthcheck se fija en el panel. Railway declaró obsoleto este formato a
 favor de su Infrastructure as Code (`.railway/railway.ts`); lo sigue leyendo
 hasta el 2026-12-01.
@@ -381,7 +381,7 @@ solas al arrancar.
 
 ## Conexión del número de WhatsApp
 
-Vocero **consume** un token de la WhatsApp Cloud API — no implementa el
+Mitten **consume** un token de la WhatsApp Cloud API — no implementa el
 Embedded Signup. Hay dos formas de obtenerlo:
 
 ### Modo directo (el negocio tiene su propia app de Meta)
@@ -391,16 +391,16 @@ Embedded Signup. Hay dos formas de obtenerlo:
 2. Crea un **usuario del sistema** (Business Settings → System users) con
    acceso a la WABA y genera un token permanente con permisos
    `whatsapp_business_messaging` y `whatsapp_business_management`.
-3. En Vocero: **Configuración → WhatsApp** → pega WABA ID + Phone Number ID +
-   token → **Probar conexión** → Guardar. Al guardar, Vocero **registra el
+3. En Mitten: **Configuración → WhatsApp** → pega WABA ID + Phone Number ID +
+   token → **Probar conexión** → Guardar. Al guardar, Mitten **registra el
    webhook en Meta por ti** (override a nivel del número, con el handshake
    incluido) y te lo confirma en pantalla. Si Meta lo rechaza, la conexión
    queda guardada igual, el aviso dice por qué (casi siempre el token no tiene
    `whatsapp_business_management`) y el botón **«Registrar en Meta»** de la
    tarjeta del webhook reintenta sin volver a pegar el token.
-4. Solo si tu app aún no tiene ningún webhook configurado (Vocero te lo
+4. Solo si tu app aún no tiene ningún webhook configurado (Mitten te lo
    avisa): en el panel de Meta (WhatsApp → Configuration → Webhook) pega la
-   **URL del webhook** y el **verify token** que Vocero te muestra, y suscribe
+   **URL del webhook** y el **verify token** que Mitten te muestra, y suscribe
    el campo `messages` (y `message_template_status_update` si usarás
    plantillas). Es una sola vez por app.
 5. Recomendado: agrega `META_APP_SECRET` (App Secret de tu app) a las
@@ -409,7 +409,7 @@ Embedded Signup. Hay dos formas de obtenerlo:
 ### Modo agencia (Tech Provider) — para agencias
 
 Tu plataforma de agencia ya hace el Embedded Signup y guarda los tokens de tus
-clientes; la instancia de Vocero del cliente solo recibe su token. El webhook
+clientes; la instancia de Mitten del cliente solo recibe su token. El webhook
 del cliente se conecta con el **override de callback por WABA**:
 
 ```text
@@ -417,7 +417,7 @@ del cliente se conecta con el **override de callback por WABA**:
         │  webhooks (override_callback_uri)
         ▼
    ┌────────────────────────────┐      ┌─────────────────────────────┐
-   │  Instancia Vocero          │      │  Backend de TU agencia      │
+   │  Instancia Mitten          │      │  Backend de TU agencia      │
    │  (VPS del cliente)         │      │  (Embedded Signup + tokens) │
    │  /api/webhooks/wa/<token>  │      └──────────────┬──────────────┘
    └────────────▲───────────────┘                     │
@@ -432,10 +432,10 @@ del cliente se conecta con el **override de callback por WABA**:
 2. **Embedded Signup en TU plataforma**: el cliente conecta su número en tu
    onboarding y tu backend guarda su token (intercambio de código → token).
 3. **Pega las credenciales en el wizard** de la instancia (WABA ID, Phone
-   Number ID, token) → **Probar conexión** → **GUARDAR**. Al guardar, Vocero
+   Number ID, token) → **Probar conexión** → **GUARDAR**. Al guardar, Mitten
    **registra el override del callback a nivel del número** hacia la propia
    instancia (y el webhook enruta cada mensaje por el Phone Number ID
-   guardado). Si tu backend ya enruta esa WABA a otro sitio, Vocero lo respeta
+   guardado). Si tu backend ya enruta esa WABA a otro sitio, Mitten lo respeta
    y no registra el del número.
 4. **Solo si prefieres enrutar desde tu backend** (o el registro automático
    falló), configura el override del callback a nivel WABA hacia la instancia:
@@ -454,7 +454,7 @@ del cliente se conecta con el **override de callback por WABA**:
    La URL y el verify token exactos están en **Configuración → WhatsApp** de la
    instancia. Meta hace el handshake en ese momento (la URI debe responder, si
    no devuelve 422). Volver a guardar la conexión después (p. ej. al rotar el
-   token) respeta este override: Vocero no re-suscribe una WABA que ya lo tiene.
+   token) respeta este override: Mitten no re-suscribe una WABA que ya lo tiene.
 5. **Registra el número** en la Cloud API si aún no lo está
    (`POST /{PHONE_NUMBER_ID}/register`) y manda un mensaje de prueba al número:
    debe aparecer en la bandeja en uno o dos segundos. Los mensajes del cliente
@@ -467,13 +467,13 @@ del cliente se conecta con el **override de callback por WABA**:
 >
 > ℹ️ **Limitación conocida de Meta**: los eventos de estado de PLANTILLAS
 > (`message_template_status_update`) no siguen el override de callback — van a
-> la app dueña. Por eso Vocero también **sincroniza plantillas por la API de
+> la app dueña. Por eso Mitten también **sincroniza plantillas por la API de
 > Graph** (botón "Sincronizar" en Configuración → Plantillas), así el modo
 > agencia ve las aprobaciones igual.
 
 ## Canales opcionales: Instagram y Messenger
 
-WhatsApp es el canal por el que existe Vocero y siempre está encendido. Los
+WhatsApp es el canal por el que existe Mitten y siempre está encendido. Los
 demás viajan en el mismo código, **apagados por defecto** ([ADR-001](docs/adr-001-canales-opcionales.md)):
 una instancia que no los usa no ve pantallas, webhooks ni variables suyas.
 Se encienden con una variable de despliegue:
@@ -495,27 +495,27 @@ Dos formas de traer los mensajes; se elige en **Configuración → Messenger**.
 1. Vincula la página de Facebook en el panel de [Zernio](https://zernio.com) y
    copia el `accountId` de esa cuenta. Crea una API key (Settings → API Keys;
    se muestra una sola vez).
-2. En Vocero, **Configuración → Messenger**: elige *Zernio*, pega el
+2. En Mitten, **Configuración → Messenger**: elige *Zernio*, pega el
    `accountId`, la API key y —recomendado— un secreto de webhook. Pulsa
    *Probar y guardar*: la llave se valida contra Zernio antes de guardarse
    cifrada, y la pantalla te enseña la URL de callback.
 3. En Zernio, da de alta ese endpoint con el evento `message.received` y el
    mismo secreto. El webhook de Zernio entrega todas tus plataformas por la
-   misma URL; Vocero solo ingiere aquí lo de Facebook.
+   misma URL; Mitten solo ingiere aquí lo de Facebook.
 
 **Con una app propia de Meta**:
 
 1. En [developers.facebook.com](https://developers.facebook.com) crea (o usa)
    una app con el producto **Messenger** y genera el **token de acceso de la
    página** con el permiso `pages_messaging`. Anota el **ID de la página**.
-2. En Vocero, **Configuración → Messenger**: elige *App propia de Meta*, pega
+2. En Mitten, **Configuración → Messenger**: elige *App propia de Meta*, pega
    el ID y el token y pulsa *Probar y guardar*.
 3. En la app de Meta, **Messenger → Webhooks**: objeto `page`, campo
    `messages`, esa URL de callback y el token de verificación que enseña la
    pantalla. Suscribe la página a la app.
 
 Desde ese momento, lo que la gente le escribe a la página entra a la bandeja
-como `Messenger`, con el nombre de su perfil, y lo que respondas desde Vocero
+como `Messenger`, con el nombre de su perfil, y lo que respondas desde Mitten
 (tú o el agente) llega a su chat. Fuera de la ventana de 24 h la respuesta sale
 con la etiqueta `HUMAN_AGENT` de Meta (hasta 7 días); no hay plantillas.
 Hoy el canal es de texto: los adjuntos que te manden se ven como
@@ -568,13 +568,13 @@ clientes reales.
 ## Cumplimiento con las políticas de Meta
 
 1. **Opt-in**: escribe solo a personas que iniciaron la conversación o
-   aceptaron recibir mensajes; Vocero respeta la ventana de 24 h y bloquea el
+   aceptaron recibir mensajes; Mitten respeta la ventana de 24 h y bloquea el
    texto libre fuera de ella.
 2. **Plantillas aprobadas** para reabrir conversaciones: nada de trucos para
    saltarse la aprobación de Meta.
 3. **El Laboratorio es 100 % interno**: los clientes simulados jamás tocan la
    API de WhatsApp (bloqueado por diseño y verificado con tests).
-4. **Sin spam ni broadcast**: Vocero no incluye envíos masivos; úsalo para
+4. **Sin spam ni broadcast**: Mitten no incluye envíos masivos; úsalo para
    conversaciones reales de venta y soporte.
 5. **Datos del cliente en su servidor**: cada negocio aloja su instancia; el
    token va cifrado en reposo y los webhooks se validan por URL secreta y
@@ -599,7 +599,7 @@ Configuración → WhatsApp. Si dice "reconectar", el token expiró: pega uno
 nuevo. En modo directo usa un token de usuario del sistema (no expira).
 
 **Error 131030 al enviar** — El número destino no está en la lista de
-permitidos (números de prueba de Meta) o el formato es inválido. Vocero ya
+permitidos (números de prueba de Meta) o el formato es inválido. Mitten ya
 normaliza los números de México (521 → 52).
 
 **El agente no responde** — ¿Token de IA configurado? ¿Toggle global
@@ -623,7 +623,7 @@ arranque lo dice (`[boot] MEDIA_DIR … no es escribible`). Monta un volumen en
 `MEDIA_DIR` en la plataforma: el contenedor le da el volumen al usuario de la
 app al arrancar.
 
-**Olvidé mi contraseña y no puedo entrar** — Vocero no manda correos (sería una
+**Olvidé mi contraseña y no puedo entrar** — Mitten no manda correos (sería una
 dependencia externa) y el registro público se cierra con la primera
 organización, así que no hay flujo de "olvidé mi contraseña". La salida es
 reescribir el hash en la base:
@@ -697,7 +697,7 @@ junto con el default de `VOCERO_CRM_VERSION` en `docker-compose.yml` y la
 etiqueta de la imagen en `render.yaml`, `fly.toml` y `railway.toml` (dos
 pruebas exigen que coincidan) y su entrada en [`CHANGELOG.md`](CHANGELOG.md),
 que dice qué trae cada versión y qué hacer para actualizar. Al crear el tag
-`vX.Y.Z`, el CI publica la imagen `ghcr.io/kevinrivm/vocero-crm:X.Y.Z`.
+`vX.Y.Z`, el CI publica la imagen `ghcr.io/kevinrivm/mitten-crm:X.Y.Z`.
 
 ## Roadmap
 

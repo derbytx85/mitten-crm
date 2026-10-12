@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
-  Sistema de diseño de Vocero: la misma marca que vocerocrm.com dentro del CRM.
+  Sistema de diseño de Mitten: la misma marca que mittencrm.com dentro del CRM.
   Papel frío (#f6f8fc), tinta azul marino, acento azul eléctrico con remate
   cian, tipografía Archivo para la interfaz, Instrument Serif itálica para los
   acentos editoriales e IBM Plex Mono para etiquetas y horas.
@@ -47,7 +47,7 @@
     --bubble-out-border: var(--accent-soft);
     --bubble-out-text: var(--text);
 
-    /* Acento (default: azul Vocero; el white-label lo sobreescribe) */
+    /* Acento (default: azul Mitten; el white-label lo sobreescribe) */
     --accent: #0d5bff;
     --accent-hover: #0a4de6;
     --accent-soft: #d3e2ff;
@@ -140,7 +140,7 @@
     --bubble-in: #173d2c;
     --bubble-in-border: #2a5e45;
 
-    /* Acento: respaldo con el azul Vocero calculado para este fondo; el
+    /* Acento: respaldo con el azul Mitten calculado para este fondo; el
        white-label lo recalcula (ver resolveAccentSet en lib/branding). */
     --accent: #256bff;
     --accent-hover: #4883ff;
